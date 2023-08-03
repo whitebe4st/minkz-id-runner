@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<head>
+<title>Certificate</title>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@600;800&family=Prompt:wght@700&display=swap');
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Prompt;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .certificate {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 10px solid #64A15A;
+            padding: 20px;
+            text-align: center;
+            width: 350px;
+            height: 650px;
+            background-color: #95C392;
+            overflow: hidden;
+            line-height: 0.8;
+            color: #fff;
+            position: relative; 
+        }
+        #nickname {
+            color: #E76163; 
+            text-decoration: underline;
+        }
+        .header-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .certificate img {
+            max-width: 100px;  
+            height: auto;
+            margin: 10px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .certificate h1 {
+            margin-bottom: 40px;
+            text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -1.5px black;  
+        }
+        .certificate h2 {
+            margin-bottom: 20px;
+            text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -1.5px black; 
+        }
+        .bottom-left-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            margin-bottom: 5px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class = "header-container">
+        <h1>ID </h1>
+        <h1 id="name"></h1>
+    </div>
+        <h2 id="nickname">Name</h2>
+        <h1>Minkz's Booth</h1>
+        <h1>Pre-Order</h1>
+        <div class="image-container"></div>
+        <div class="bottom-left-text">โชว์รูปนี้ให้กับหน้าบูธหรือแจ้งไอดีได้เลย</div> <!-- Add this line -->
+    </div>
+        <div>
+        <input type="checkbox" id="img1" value="src/img/vis.png" onchange="updateCertificate()"> Viscunam<br>
+        <input type="checkbox" id="img2" value="src/img/bowg.png" onchange="updateCertificate()"> Bowgore<br>
+        </div>
+        <div>
+        <input type="checkbox" id="img3" value="src/img/ben.png" onchange="updateCertificate()"> Ben<br>
+        <input type="checkbox" id="img4" value="src/img/bow.png" onchange="updateCertificate()"> Bowser<br>
+        </div>
+
+
+    <div>
+    <h3>ID <input type="number" id="idNumber" value="0" min="0" oninput="updateId()"></h3><br>
+
+    <h3>Nickname <input type="text" id="nicknameInput" oninput="updateNickname()"></h3><br>
+    &nbsp&nbsp&nbsp<button onclick="exportToImage()">Export to Image</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.3/html2canvas.min.js"></script>
+    <script>
+         window.onload = function() {
+            // Load stored ID value
+            var storedId = localStorage.getItem('id');
+            if (storedId) {
+                document.getElementById("name").innerText = storedId;
+            }
+
+            // Load stored ID number
+            var storedIdNumber = localStorage.getItem('idNumber');
+            if (storedIdNumber) {
+                document.getElementById("idNumber").value = storedIdNumber;
+                // Update the name element's text content with the stored ID number
+                document.getElementById("name").textContent = storedIdNumber;
+            }
+
+            // Load stored nickname
+            var storedNickname = localStorage.getItem('nickname');
+            if (storedNickname) {
+                document.getElementById("nickname").textContent = storedNickname;
+                document.getElementById("nicknameInput").value = storedNickname;
+            }
+
+            // Load stored checkbox states
+            var checkboxes = document.querySelectorAll('input[type=checkbox]');
+            checkboxes.forEach(function(checkbox) {
+                var storedState = localStorage.getItem(checkbox.id);
+                if (storedState === 'true') {
+                    checkbox.checked = true;
+                }
+            });
+
+            // Update certificate based on stored states
+            updateCertificate();
+        };
+
+        function updateCertificate() {
+            var checkboxes = document.querySelectorAll('input[type=checkbox]');
+            var container = document.querySelector(".image-container");
+            container.innerHTML = ''; // Clear the container
+            checkboxes.forEach(function(checkbox) {
+                // Store checkbox state
+                localStorage.setItem(checkbox.id, checkbox.checked);
+
+                if (checkbox.checked) {
+                    var img = document.createElement("img");
+                    img.src = checkbox.value;
+                    container.appendChild(img);
+                }
+            });
+        }
+
+        function exportToImage() {
+            var id = document.getElementById("name").innerText;
+            // Store ID value
+            localStorage.setItem('id', id);
+
+            html2canvas(document.querySelector(".certificate")).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'ID_' + id + '.png';
+                link.href = canvas.toDataURL()
+                link.click();
+            });
+        }
+        
+        function updateId() {
+            var idNumber = document.getElementById("idNumber").value;
+            // Only update the name element's text content if the idNumber input field's value is not empty
+            if (idNumber !== '') {
+                document.getElementById("name").textContent = idNumber;
+            }
+
+            // Store ID number
+            localStorage.setItem('idNumber', idNumber);
+        }
+
+        function updateNickname() {
+            var nickname = document.getElementById("nicknameInput").value;
+            document.getElementById("nickname").textContent = nickname;
+
+            // Store nickname
+            localStorage.setItem('nickname', nickname);
+        }
+
+
+    </script>
+</body>
+</html>
